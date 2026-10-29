@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+      - develop
+      - feature/*
 jobs:
   code-quality:
     runs-on: ubuntu-latest
@@ -47,3 +49,23 @@ jobs:
       - name: Construire le projet
         run: echo "Construction du projet"
 
+name: gestion de branche
+on:
+  push:
+    branches:
+      - main
+jobs: 
+  cache:
+  runs-on: ubuntu-latest
+  steps:
+  name: Récupérer le dépôt
+  uses: actions/checkout@v7
+  mise en cache des dependance
+  use: actions/cache@v6
+  key ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+restore-keys: |
+  ${{ runner.os }}-node-
+  ${{ runner.os }}-
+  - name: Installer les dépendances
+    run: npm ci
+  
