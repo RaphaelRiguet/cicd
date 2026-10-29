@@ -1,29 +1,47 @@
-name: les variables
+name: Needs et Outputs
 on:
   push:
     branches:
       - main
-      -develop
-env:
-  MA_VARIABLE: variable dans le workflow
-  autre_varible: une autre valeur globale
-
 jobs:
-  variable-et-contexte:
-    env:
-    JOB_VARIABLE: variable dans le job
+  code-quality:
     runs-on: ubuntu-latest
     steps:
-    -name: Récupérer le dépôt
-     uses: actions/checkout@v7
-     -name: Lister les variables par defaut
-      run: env
-      name: lister les variable d'environnement du job
-      env:
-        STEP_VARIABLE: variable dans l'étape
-      run: |
-        echo "-----variables github------"
-        echo $GITHUB_REF
-        echo $GITHUB_SHA
-        echo ${{runer.os}}
-        
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Verifier la qualité du code
+        run: echo "Vérification de la qualité du code"
+      - name: quality code version
+        id: quality-code-version
+        run: echo "code-quality-version=1.0.0" >> $GITHUB_ENV
+      - name: Linting du code
+        run: echo "Linting du code"
+      - name: Afficher la version de la qualité du code
+        run: echo La version de la qualité du code ${{steps.quality-code-version.outputs.code-quality-version}}
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Analyse statique du code
+        run: echo "Analyse statique du code"
+  test:
+    needs: [code-quality, static-analysis]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Exécuter les tests
+        run: echo "Exécution des tests"
+      - name: Afficher la version de la qualité du code
+        run: echo La version de la qualité du code ${{steps.quality-code-version.outputs.code-quality-version}}
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v7
+      - name: Construire le projet
+        run: echo "Construction du projet"
+
