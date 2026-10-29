@@ -26,3 +26,4 @@ jobs:
         echo $GITHUB_REF
         echo $GITHUB_SHA
         echo ${{runer.os}}
+        
